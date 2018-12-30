@@ -2,8 +2,9 @@ package controller;
 
 import model.Bar;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class InventoryManager {
     private  ArrayList<Bar> inventory = new ArrayList<Bar>();
@@ -29,7 +30,17 @@ public class InventoryManager {
 
     }
 
-    private String fileToString(){
+    private String fileToString(String filePath) throws IOException {
+        BufferedReader reader = new BufferedReader((new FileReader(filePath)));
+        StringBuilder sb = new StringBuilder();
+        String currentLine = reader.readLine();
+        while(currentLine != null) {
+            sb.append(currentLine);
+            sb.append('\n'); //we append the linebreak to the thing too
+            currentLine = reader.readLine();
+        }
+
+        reader.close();
 
     }
 
