@@ -16,7 +16,9 @@ public class Bar {
     }
 
     //empty constructor
-    public Bar() { }
+    public Bar() {
+
+    }
 
     public void setColour(String colour) {
         this.colour = colour;
