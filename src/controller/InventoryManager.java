@@ -8,19 +8,23 @@ import java.util.ArrayList;
 
 public class InventoryManager {
     private ArrayList<Bar> inventory = new ArrayList<Bar>();
-    private String errMSG = null;
+    //if it ends up being "OK" then we know it went well, if not it will be error codes
+    private String status = null;
 
 
     public InventoryManager(String dbFilePath) {
-        loadInventory(dbFilePath);
+        String resolution = loadInventory(dbFilePath);
+        if(!resolution.equals("OK")) {
+            this.status = "Errores Encontrados: " + resolution;
+        }
     }
 
 
 
 
-    private void loadInventory(String inventoryFilePath) { //will return a string with an error if there is any
+    private String loadInventory(String inventoryFilePath) { //will return a string with an error if there is any
+        StringBuilder possibleErrors = new StringBuilder();
 
-        //todo, implement the method that will read the inventory file (or create it if it doesnt exist)
         try {
             String fileText = FileFunctions.toString(inventoryFilePath);
             File dbFile = new File(inventoryFilePath);
@@ -28,7 +32,6 @@ public class InventoryManager {
                 //if it doesnt exist, (try to) create it.
                 boolean success = dbFile.createNewFile();
                 if (!success) {
-                    System.err.println("El archivo de base de datos no se pudo crear");
                     throw new FileNotFoundException();
                 }
             }
@@ -51,16 +54,22 @@ public class InventoryManager {
 
 
         } catch (FileNotFoundException e) {
-            this.errMSG = "El archivo no existe (y/o no se ha podido crear) o no tiene permisos de lectura";
+            possibleErrors.append("El archivo no existe (y/o no se ha podido crear) o no tiene permisos de lectura\n");
 
         } catch (IOException e) {
-            this.errMSG = "IO ERROR (Perhaps could not create file)" + e.getStackTrace();
+            possibleErrors.append("IO ERROR (Perhaps could not create file)\n");
 
         } catch (NumberFormatException e) {
-            this.errMSG = "El numero introducido no es un numero valido";
+            possibleErrors.append ("El numero introducido no es un numero valido\n");
         } catch (Exception e) {
-            this.errMSG = "unexpected error" + e.getStackTrace();
+            possibleErrors.append("unexpected error\n");
 
+        }
+        //if we know its emptry
+        if (possibleErrors.length() <= 0) {
+            return "OK";
+        } else {
+            return possibleErrors.toString();
         }
 
     }
@@ -69,7 +78,7 @@ public class InventoryManager {
 
 
     public void clearError() {
-        this.errMSG = null;
+        this.status = null;
 
     }
 
